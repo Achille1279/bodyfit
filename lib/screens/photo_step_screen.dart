@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'camera_screen.dart';
+import 'result_screen.dart';
 
 class PhotoStepScreen extends StatefulWidget {
   final int stepIndex;
@@ -27,7 +28,7 @@ class _PhotoStepScreenState extends State<PhotoStepScreen> {
         builder: (context) => CameraScreen(
           expectedOrientation: steps[widget.stepIndex],
           onPictureTaken: (file) {
-            final List<XFile> updated = [...widget.pictures, file];
+            final updated = [...widget.pictures, file];
             if (widget.stepIndex < steps.length - 1) {
               Navigator.pushReplacement(
                 context,
@@ -39,17 +40,10 @@ class _PhotoStepScreenState extends State<PhotoStepScreen> {
                 ),
               );
             } else {
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text("✅ Terminé"),
-                  content: const Text("Toutes les photos sont prises !"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("OK"),
-                    ),
-                  ],
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ResultScreen(pictures: updated),
                 ),
               );
             }
@@ -75,10 +69,7 @@ class _PhotoStepScreenState extends State<PhotoStepScreen> {
               onPressed: _launchCamera,
             ),
             const SizedBox(height: 20),
-            ...widget.pictures.map((pic) => Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.file(File(pic.path), height: 100),
-            )),
+            const Text("Prenez une photo pour cette étape pour continuer."),
           ],
         ),
       ),
