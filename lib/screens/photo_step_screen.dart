@@ -21,7 +21,14 @@ class PhotoStepScreen extends StatefulWidget {
 class _PhotoStepScreenState extends State<PhotoStepScreen> {
   final List<String> steps = ['face', 'profil_droit', 'profil_gauche', 'dos'];
 
-  void _launchCamera() {
+  final Map<String, String> instructions = {
+    'face': '📸 Placez-vous bien face à la caméra',
+    'profil_droit': '👉 Placez-vous de profil droit (épaules à droite)',
+    'profil_gauche': '👈 Placez-vous de profil gauche (épaules à gauche)',
+    'dos': '🔙 Tournez le dos à la caméra',
+  };
+
+  void _openCamera() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -56,20 +63,35 @@ class _PhotoStepScreenState extends State<PhotoStepScreen> {
   @override
   Widget build(BuildContext context) {
     final currentStep = steps[widget.stepIndex];
+    final instruction = instructions[currentStep] ?? '';
+    final imagePath = 'assets/images/$currentStep.png';
+
     return Scaffold(
-      appBar: AppBar(title: Text("Étape ${widget.stepIndex + 1}: $currentStep")),
+      appBar: AppBar(
+        title: Text("Étape ${widget.stepIndex + 1} / ${steps.length}"),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              imagePath,
+              height: 300,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              instruction,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
               label: const Text("Prendre la photo"),
-              onPressed: _launchCamera,
+              onPressed: _openCamera,
             ),
-            const SizedBox(height: 20),
-            const Text("Prenez une photo pour cette étape pour continuer."),
           ],
         ),
       ),
